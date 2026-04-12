@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NP2 — Sơ đồ Sequence Luồng Nghiệp Vụ</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+    }
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      color: white;
+      padding: 32px 40px;
+    }
+    header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    header p { font-size: 14px; opacity: 0.75; }
+    .company { font-size: 12px; opacity: 0.55; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* NAV */
+    nav {
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 0 40px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    nav a {
+      display: block;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #555;
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    nav a:hover { color: #0f3460; border-bottom-color: #0f3460; }
+    nav a.active { color: #0f3460; border-bottom-color: #0f3460; font-weight: 600; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px; }
+
+    /* OVERVIEW CARDS */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border-left: 4px solid #0f3460;
+    }
+    .card.green { border-left-color: #10b981; }
+    .card.orange { border-left-color: #f59e0b; }
+    .card.purple { border-left-color: #8b5cf6; }
+    .card.red { border-left-color: #ef4444; }
+    .card h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 12px; }
+    .card-list { list-style: none; }
+    .card-list li {
+      padding: 6px 0;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .card-list li:last-child { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #e8f0fe;
+      color: #0f3460;
+      white-space: nowrap;
+    }
+    .badge.green { background: #d1fae5; color: #065f46; }
+    .badge.orange { background: #fef3c7; color: #92400e; }
+    .badge.purple { background: #ede9fe; color: #5b21b6; }
+    .badge.red { background: #fee2e2; color: #991b1b; }
+    .badge.gray { background: #f3f4f6; color: #374151; }
+
+    /* ACTOR TABLE */
+    .actor-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      margin-bottom: 48px;
+    }
+    .actor-table th {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 12px 16px;
+      font-size: 12px;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .actor-table td {
+      padding: 12px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
+    .actor-table tr:last-child td { border-bottom: none; }
+    .actor-table tr:hover td { background: #f8f9fa; }
+    .actor-code { font-family: monospace; font-weight: 700; color: #0f3460; }
+
+    /* SECTION */
+    .section { margin-bottom: 64px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .section-number {
+      width: 36px;
+      height: 36px;
+      background: #0f3460;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .section-title { font-size: 20px; font-weight: 700; }
+    .section-sub { font-size: 13px; color: #888; margin-left: auto; }
+
+    .diagram-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+    .diagram-note {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #555;
+      border-left: 3px solid #e0e0e0;
+    }
+
+    /* TRANSACTION TABLE */
+    .tx-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .tx-table th {
+      background: #f0f2f5;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .tx-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .tx-table tr:hover td { background: #fafafa; }
+    .tx-code {
+      font-family: monospace;
+      font-weight: 700;
+      color: #0f3460;
+      background: #e8f0fe;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* MERMAID */
+    .mermaid { text-align: center; }
+
+    /* Section anchor */
+    .section[id] { scroll-margin-top: 60px; }
+
+    footer {
+      text-align: center;
+      padding: 32px;
+      color: #999;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="company">Công ty TNHH Đồ Gỗ Nghĩa Phát &amp; Nghĩa Tín</div>
+  <h1>NP2 — Sơ đồ Sequence Luồng Nghiệp Vụ Kho</h1>
+  <p>Tổng hợp từ tài liệu logic ngày 08–09/04/2026 · Ngày phân tích: 11/04/2026</p>
+</header>
+
+<nav>
+  <a href="#overview">Tổng quan</a>
+  <a href="#actors">Actor &amp; Action</a>
+  <a href="#flow1">1. Nhận hàng / TMP</a>
+  <a href="#flow2">2. Packing / Put-away</a>
+  <a href="#flow3">3. Direct Shipment</a>
+  <a href="#flow4a">4A. QC – Trả nguyên</a>
+  <a href="#flow4b">4B. QC – Giảm SL</a>
+  <a href="#flow4c">4C. QC – Tách pallet</a>
+  <a href="#flow5">5. Rework</a>
+  <a href="#flow6">6. Loading Container</a>
+  <a href="#flow7">7. Merge Pallet</a>
+  <a href="#flow8">8. Kiểm kho / Adjust</a>
+  <a href="#transactions">Bảng giao dịch</a>
+</nav>
+
+<div class="container">
+
+  <!-- OVERVIEW -->
+  <section class="section" id="overview">
+    <div class="section-header">
+      <div class="section-number" style="background:#10b981">📊</div>
+      <div class="section-title">Tổng quan Nguồn Nghiệp Vụ</div>
+    </div>
+
+    <div class="overview-grid">
+      <!-- Nguồn nghiệp vụ -->
+      <div class="card">
+        <h3>🏭 6 Nguồn nghiệp vụ</h3>
+        <ul class="card-list">
+          <li><span class="badge">NP1</span> Kho sản xuất — nguồn hàng đầu vào (TMP)</li>
+          <li><span class="badge green">NP2</span> Kho thành phẩm — trung tâm vận hành</li>
+          <li><span class="badge orange">PACKING</span> Khu đóng gói — chuyển TMP → Finished</li>
+          <li><span class="badge purple">QC/KCS</span> Kiểm tra chất lượng — sinh giao dịch điều chỉnh</li>
+          <li><span class="badge gray">KẾ HOẠCH</span> Phòng kế hoạch — cung cấp PO, lịch shipment</li>
+          <li><span class="badge red">CONTAINER</span> Forwarder/vận chuyển — nhận hàng xuất</li>
+        </ul>
+      </div>
+
+      <!-- Loại pallet -->
+      <div class="card green">
+        <h3>📦 2 Loại pallet</h3>
+        <ul class="card-list">
+          <li><span class="badge orange">TMP</span> Bán thành phẩm / chưa đóng gói — có TMP_ID, SKU, PO, SL, vị trí, m³</li>
+          <li><span class="badge green">PLT</span> Finished pallet — đã đóng gói, có Pallet ID, tem QR, trạng thái đầy đủ</li>
+        </ul>
+      </div>
+
+      <!-- Trạng thái pallet -->
+      <div class="card orange">
+        <h3>🔄 6 Trạng thái pallet (PLT)</h3>
+        <ul class="card-list">
+          <li><span class="badge orange">CHO_QC</span> Mới đóng gói, chờ kiểm tra</li>
+          <li><span class="badge green">OK</span> Đã QC đạt, sẵn sàng xuất</li>
+          <li><span class="badge red">HOLD</span> Tạm giữ, chưa xác định</li>
+          <li><span class="badge red">REWORK</span> Hàng lỗi đang xử lý</li>
+          <li><span class="badge purple">STAGING</span> Sẵn sàng lên container</li>
+          <li><span class="badge gray">DA_XUAT</span> Đã xuất khỏi kho</li>
+        </ul>
+      </div>
+
+      <!-- Luồng nghiệp vụ -->
+      <div class="card purple">
+        <h3>🔀 8 Luồng nghiệp vụ chính</h3>
+        <ul class="card-list">
+          <li><span class="badge">F1</span> Nhận hàng từ NP1 → Tạo TMP pallet</li>
+          <li><span class="badge">F2</span> Packing → Finished Pallet → Put-away</li>
+          <li><span class="badge">F3</span> Direct Shipment (bỏ qua kệ)</li>
+          <li><span class="badge orange">F4</span> QC Random Inspection (3 nhánh)</li>
+          <li><span class="badge red">F5</span> Rework / Hàng lỗi</li>
+          <li><span class="badge red">F6</span> Loading Container (xuất hàng)</li>
+          <li><span class="badge purple">F7</span> Merge Pallet</li>
+          <li><span class="badge gray">F8</span> Kiểm kho / Điều chỉnh lệch</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTORS -->
+  <section class="section" id="actors">
+    <div class="section-header">
+      <div class="section-number">👥</div>
+      <div class="section-title">Actor &amp; Action</div>
+    </div>
+
+    <div class="diagram-box">
+      <table class="actor-table">
+        <thead>
+          <tr>
+            <th>Mã Actor</th>
+            <th>Tên đầy đủ</th>
+            <th>Vai trò</th>
+            <th>Các Action chính</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="actor-code">NP1</span></td>
+            <td>Kho sản xuất NP1</td>
+            <td>Nguồn cung cấp hàng vào NP2; nhận hàng lỗi trả về</td>
+            <td>Giao hàng kèm phiếu · Nhận hàng REWORK trả về</td>
+          </tr>
+          <tr>
+            <td><span class="actor-code">NV_KHO</span></td>
+            <td>Nhân viên kho NP2</td>
+            <td>Vận hành kho hàng ngày — nhập, di chuyển, xuất pallet</td>
+            <td>Kiểm nhận hàng · Tạo TMP pallet · Put-away · Di chuyển pallet · Loading container · Merge pallet · Kiểm kê</td>
+          </tr>
+          <tr>
+            <td><span class="actor-code">NV_PACK</span></td>
+            <td>Nhân viên Packing</td>
+            <td>Thực hiện đóng gói từ TMP → Finished pallet</td>
+            <td>Kiểm tra điều kiện đóng gói · Thực hiện packing · Tạo Finished pallet · In &amp; dán tem QR</td>
+          </tr>
+          <tr>
+            <td><span class="actor-code">NV_QC</span></td>
+            <td>Nhân viên QC / KCS</td>
+            <td>Kiểm tra chất lượng ngẫu nhiên, phân loại lỗi</td>
+            <td>QC Random Inspection · Ghi nhận kết quả QC · Phân loại lỗi nhẹ / nặng · Quyết định giữ / tách / trả pallet</td>
+          </tr>
+          <tr>
+            <td><span class="actor-code">QL_KHO</span></td>
+            <td>Quản lý kho</td>
+            <td>Ra quyết định, xác nhận các thao tác đặc biệt</td>
+            <td>Phê duyệt ADJUST · Xác nhận LOST · Xác nhận Direct Shipment · Theo dõi Dashboard</td>
+          </tr>
+          <tr>
+            <td><span class="actor-code">KH</span></td>
+            <td>Phòng Kế hoạch</td>
+            <td>Cung cấp PO, lịch container; điều phối xuất hàng</td>
+            <td>Tạo PO Master · Lên lịch container · Ra lệnh xuất · Xác nhận Direct Shipment</td>
+          </tr>
+          <tr>
+            <td><span class="actor-code">ERP</span></td>
+            <td>Hệ thống ERP NP2</td>
+            <td>Ghi nhận &amp; lưu trữ mọi giao dịch; không thao tác trực tiếp số liệu</td>
+            <td>Gán mã pallet (PLT-YYMM-XXXX) · Sinh QR code &amp; tem · Ghi Transaction Log · Cập nhật trạng thái &amp; vị trí · Xuất Dashboard</td>
+          </tr>
+          <tr>
+            <td><span class="actor-code">CONTAINER</span></td>
+            <td>Forwarder / Container</td>
+            <td>Nhận hàng xuất, xác nhận số lượng lên container</td>
+            <td>Xác nhận nhận hàng · Ký chứng từ xuất</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FLOW 1 -->
+  <section class="section" id="flow1">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div class="section-title">Luồng 1 — Nhận hàng từ NP1 → Tạo TMP Pallet</div>
+      <span class="section-sub">Bước 1–2 trong quy trình</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor NP1 as 🏭 NP1
+  actor NV_KHO as 👷 NV_KHO
+  participant ERP as 💻 ERP
+
+  NP1->>NV_KHO: Giao hàng kèm phiếu giao nhận (SKU, PO, SL)
+  NV_KHO->>NV_KHO: Kiểm đếm số lượng thực tế
+  NV_KHO->>NV_KHO: Kiểm tra chất lượng sơ bộ (lỗi nặng → trả lại NP1)
+
+  alt Hàng đạt — nhận vào kho
+    NV_KHO->>ERP: Nhập liệu: PO, SKU, SL, loại (FULL / COMPONENT), m³, vị trí
+    ERP->>ERP: Gán TMP_ID duy nhất
+    ERP->>ERP: Ghi Transaction: NHAP (TMP)
+    ERP-->>NV_KHO: Trả về TMP_ID + tem pallet
+    NV_KHO->>NV_KHO: In tem, dán lên pallet vật lý
+    NV_KHO->>NV_KHO: Đưa pallet vào khu nhập / vị trí lưu trữ
+    ERP->>ERP: Cập nhật trạng thái TMP: CHO_DONG_GOI / CHO_BO
+  else Hàng lỗi — trả lại NP1
+    NV_KHO-->>NP1: Trả lại hàng, ghi chú lý do từ chối
+  end
+      </div>
+    </div>
+    <div class="diagram-note">
+      ⚠️ TMP pallet là tồn kho thật — phải quản lý nhập/xuất/tồn như Finished pallet. Hàng COMPONENT có thể tồn lâu nếu chưa đủ bộ.
+    </div>
+  </section>
+
+  <!-- FLOW 2 -->
+  <section class="section" id="flow2">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div class="section-title">Luồng 2 — Packing → Tạo Finished Pallet → Put-away</div>
+      <span class="section-sub">Bước 3–6A trong quy trình</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor NV_PACK as 📦 NV_PACK
+  actor NV_KHO as 👷 NV_KHO
+  participant ERP as 💻 ERP
+
+  NV_PACK->>ERP: Tra cứu TMP pallet sẵn có (SKU, SL)
+
+  alt Hàng FULL — chỉ kiểm SL
+    ERP-->>NV_PACK: Đủ SL — có thể đóng gói
+  else Hàng COMPONENT — kiểm đủ bộ
+    ERP-->>NV_PACK: Đủ tất cả thành phần → Có thể đóng gói
+  end
+
+  Note over NV_PACK: Thực hiện Packing<br/>(1 hoặc nhiều TMP → 1 Finished pallet)
+
+  NV_PACK->>NV_PACK: Chất hàng lên pallet, chốt SL thực tế
+  NV_PACK->>ERP: Báo kết quả: PLT_SL_thực, m³, TMP_ID nguồn
+  ERP->>ERP: Giảm SL TMP pallet tương ứng
+  ERP->>ERP: Tạo Finished Pallet record (PLT-YYMM-XXXX)
+  ERP->>ERP: Ghi Transaction: NHAP (PLT) + XUAT (TMP nguồn)
+  ERP-->>NV_PACK: Trả Pallet ID + lệnh in tem QR
+  NV_PACK->>NV_PACK: In tem QR, dán lên pallet vật lý
+
+  Note over NV_KHO: Nhánh 6A: Put-away vào kệ
+
+  NV_PACK->>NV_KHO: Bàn giao pallet thành phẩm
+  NV_KHO->>ERP: Ghi Put-away: Pallet ID + vị trí kệ
+  ERP->>ERP: Ghi Transaction: MOVE (vị trí → kệ)
+  ERP->>ERP: Cập nhật trạng thái: CHO_QC
+      </div>
+    </div>
+    <div class="diagram-note">
+      ⚠️ Trình tự bắt buộc: chất pallet xong → chốt SL thực tế → tạo Pallet ID → in tem → dán → nhập ERP. Không tạo ID trước khi có SL thực.
+    </div>
+  </section>
+
+  <!-- FLOW 3 -->
+  <section class="section" id="flow3">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div class="section-title">Luồng 3 — Direct Shipment (Đi thẳng Container)</div>
+      <span class="section-sub">Bước 6B — nhánh đặc biệt sau packing</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor KH as 📋 KH (Kế hoạch)
+  actor QL_KHO as 🏢 QL_KHO
+  actor NV_PACK as 📦 NV_PACK
+  actor NV_KHO as 👷 NV_KHO
+  participant ERP as 💻 ERP
+  actor CONTAINER as 🚛 CONTAINER
+
+  KH->>QL_KHO: Yêu cầu Direct Shipment (shipment cấp bách)
+  QL_KHO->>NV_PACK: Xác nhận — pallet sau packing đi thẳng container
+
+  Note over NV_PACK: Thực hiện Packing (như Luồng 2)
+
+  NV_PACK->>ERP: Tạo Finished Pallet record
+  ERP->>ERP: Gán Pallet ID, ghi NHAP
+  ERP-->>NV_PACK: Pallet ID + tem QR
+  NV_PACK->>NV_PACK: In tem, dán lên pallet
+
+  Note over NV_KHO: Bỏ qua bước Put-away vào kệ
+
+  NV_KHO->>ERP: Ghi nhận Direct Shipment: Pallet ID → Container ID
+  ERP->>ERP: Cập nhật trạng thái: STAGING → DA_XUAT
+  ERP->>ERP: Ghi Transaction: XUAT (lý do: DIRECT_SHIPMENT)
+  NV_KHO->>CONTAINER: Đưa pallet lên container
+  CONTAINER-->>NV_KHO: Xác nhận nhận hàng
+      </div>
+    </div>
+    <div class="diagram-note">
+      ⚠️ Dù đi thẳng container, pallet vẫn phải có record đầy đủ trong ERP. Chỉ bỏ qua bước put-away vào kệ, không bỏ qua ghi nhận hệ thống.
+    </div>
+  </section>
+
+  <!-- FLOW 4A -->
+  <section class="section" id="flow4a">
+    <div class="section-header">
+      <div class="section-number">4A</div>
+      <div class="section-title">Luồng 4A — QC Random Inspection: Trả lại nguyên vẹn</div>
+      <span class="section-sub">Bước 7 — Trường hợp 1: không có thay đổi</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor NV_QC as 🔍 NV_QC
+  actor NV_KHO as 👷 NV_KHO
+  participant ERP as 💻 ERP
+
+  NV_QC->>NV_KHO: Yêu cầu QC random pallet (theo Pallet ID)
+  NV_KHO->>ERP: Ghi nhận bắt đầu QC (Pallet ID, ngày)
+  ERP->>ERP: Cập nhật ghi chú: Đang QC
+
+  NV_QC->>NV_QC: Mở pallet, lấy mẫu kiểm tra
+  NV_QC->>NV_QC: Kết luận: Đạt, không thay đổi số lượng
+
+  NV_QC->>NV_KHO: Trả lại pallet nguyên vẹn
+  NV_KHO->>ERP: Ghi nhận kết quả QC: PASS, không điều chỉnh
+
+  Note over ERP: KHÔNG tạo giao dịch điều chỉnh tồn<br/>Chỉ cập nhật QC_Status: OK và ngày QC
+  ERP->>ERP: Cập nhật QC_Status = OK, Ngày_QC = hôm nay
+  ERP->>ERP: Cập nhật trạng thái pallet: OK
+      </div>
+    </div>
+    <div class="diagram-note">
+      ⚠️ Nguyên tắc quan trọng: QC chỉ cập nhật ERP khi có thay đổi thực sự. Nếu trả nguyên vẹn, KHÔNG tạo giao dịch điều chỉnh tồn kho.
+    </div>
+  </section>
+
+  <!-- FLOW 4B -->
+  <section class="section" id="flow4b">
+    <div class="section-header">
+      <div class="section-number">4B</div>
+      <div class="section-title">Luồng 4B — QC Random Inspection: Giảm số lượng (QC_ADJUST)</div>
+      <span class="section-sub">Bước 7 — Trường hợp 2: pallet cũ giảm SL</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor NV_QC as 🔍 NV_QC
+  actor NV_KHO as 👷 NV_KHO
+  participant ERP as 💻 ERP
+
+  NV_QC->>NV_QC: QC Random — phát hiện SL thực tế ít hơn tem
+
+  NV_QC->>NV_KHO: Báo SL thực tế sau QC
+  NV_KHO->>ERP: Ghi QC_ADJUST: Pallet ID, SL_mới, SL_chênh lệch, lý do
+
+  ERP->>ERP: Cập nhật SL_hiện_tại trên pallet = SL_mới
+  ERP->>ERP: Ghi Transaction: QC_ADJUST (SL thay đổi âm)
+  ERP->>ERP: Cập nhật m³ tinh tương ứng
+  ERP->>ERP: Cập nhật QC_Status = OK
+  ERP->>ERP: Cập nhật trạng thái pallet: OK
+
+  ERP-->>NV_KHO: Xác nhận điều chỉnh thành công
+  NV_KHO->>NV_KHO: Cập nhật tem pallet (nếu cần in lại)
+      </div>
+    </div>
+    <div class="diagram-note">
+      📝 Lưu lý do điều chỉnh vào Transaction Log. SL và m³ phải được cập nhật đồng thời. In lại tem nếu SL trên tem không còn chính xác.
+    </div>
+  </section>
+
+  <!-- FLOW 4C -->
+  <section class="section" id="flow4c">
+    <div class="section-header">
+      <div class="section-number">4C</div>
+      <div class="section-title">Luồng 4C — QC Random Inspection: Tạo pallet mới (QC_SPLIT)</div>
+      <span class="section-sub">Bước 7 — Trường hợp 3: tách pallet hoặc kết hợp cả hai</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor NV_QC as 🔍 NV_QC
+  actor NV_KHO as 👷 NV_KHO
+  participant ERP as 💻 ERP
+
+  NV_QC->>NV_QC: QC Random — lấy hàng ra, gom thành pallet riêng
+  Note over NV_QC: Có thể xảy ra đồng thời:<br/>Pallet cũ giảm SL + Hình thành pallet mới
+
+  NV_QC->>NV_KHO: Báo: Pallet cũ SL_mới + SL hàng gom ra
+  NV_KHO->>ERP: Ghi QC_ADJUST pallet cũ: SL giảm còn SL_mới
+  ERP->>ERP: Cập nhật pallet cũ: SL_mới, m³_mới
+  ERP->>ERP: Ghi Transaction: QC_ADJUST (SL âm trên pallet cũ)
+
+  NV_KHO->>NV_KHO: Chất hàng gom ra thành pallet vật lý mới
+  NV_KHO->>ERP: Tạo pallet mới: SKU, PO, SL_mới, vị trí
+  ERP->>ERP: Gán Pallet ID mới (PLT-YYMM-XXXX)
+  ERP->>ERP: Ghi Transaction: QC_SPLIT (tham chiếu Pallet cũ)
+  ERP-->>NV_KHO: Pallet ID mới + lệnh in tem
+  NV_KHO->>NV_KHO: In tem mới, dán lên pallet vật lý mới
+  ERP->>ERP: Cập nhật trạng thái pallet mới: CHO_QC
+      </div>
+    </div>
+    <div class="diagram-note">
+      📝 Transaction QC_SPLIT phải tham chiếu Pallet ID gốc để truy xuất nguồn gốc. Pallet mới sau QC_SPLIT mặc định trạng thái CHO_QC (chờ QC tiếp nếu cần).
+    </div>
+  </section>
+
+  <!-- FLOW 5 -->
+  <section class="section" id="flow5">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div class="section-title">Luồng 5 — Rework / Hàng Lỗi</div>
+      <span class="section-sub">Bước 8 — Lỗi nhẹ xử lý tại NP2, lỗi nặng trả NP1</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor NV_QC as 🔍 NV_QC
+  actor NV_KHO as 👷 NV_KHO
+  actor QL_KHO as 🏢 QL_KHO
+  participant ERP as 💻 ERP
+  actor NP1 as 🏭 NP1
+
+  NV_QC->>NV_QC: Phát hiện pallet lỗi
+  NV_QC->>QL_KHO: Báo cáo lỗi + mô tả
+
+  QL_KHO->>NV_QC: Phân loại: Lỗi nhẹ hay Lỗi nặng?
+
+  alt LỖI NHẸ — xử lý tại QC/NP2
+    NV_KHO->>ERP: Ghi nhận HOLD: Pallet ID, lý do lỗi
+    ERP->>ERP: Cập nhật trạng thái: REWORK
+    ERP->>ERP: Ghi Transaction: HOLD
+
+    NV_QC->>NV_QC: Thực hiện sửa chữa tại chỗ
+    Note over NV_QC: Xử lý tương tự QC_ADJUST hoặc QC_SPLIT<br/>tùy kết quả sửa chữa
+
+    NV_QC->>ERP: Cập nhật kết quả sau sửa
+    ERP->>ERP: Ghi Transaction: QC_ADJUST hoặc QC_SPLIT
+    ERP->>ERP: Cập nhật trạng thái: OK hoặc CHO_QC
+  else LỖI NẶNG — trả về NP1
+    NV_KHO->>ERP: Ghi OUT REWORK: Pallet ID, số lượng trả, lý do
+    ERP->>ERP: Cập nhật trạng thái: REWORK
+    ERP->>ERP: Ghi Transaction: XUAT (lý do: REWORK → NP1)
+    ERP->>ERP: Cập nhật SL_hiện_tại = 0 (đã xuất khỏi NP2)
+
+    NV_KHO->>NP1: Bàn giao pallet lỗi + phiếu trả hàng
+    NP1-->>NV_KHO: Ký nhận xác nhận
+
+    Note over ERP: NP2 không theo dõi tiếp luồng<br/>hàng sau khi về NP1
+  end
+      </div>
+    </div>
+    <div class="diagram-note">
+      ⚠️ NP2 chỉ ghi OUT (REWORK) khi trả NP1. Không theo dõi tiếp trong hệ thống NP2 sau khi hàng đã rời kho. NP1 và NP2 tách biệt hệ thống.
+    </div>
+  </section>
+
+  <!-- FLOW 6 -->
+  <section class="section" id="flow6">
+    <div class="section-header">
+      <div class="section-number">6</div>
+      <div class="section-title">Luồng 6 — Loading Container / Xuất hàng</div>
+      <span class="section-sub">Bước 9 — Xuất nguyên pallet hoặc xuất dở</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor KH as 📋 KH (Kế hoạch)
+  actor NV_KHO as 👷 NV_KHO
+  participant ERP as 💻 ERP
+  actor CONTAINER as 🚛 CONTAINER
+
+  KH->>NV_KHO: Lệnh xuất container (danh sách Pallet ID, Container ID)
+  NV_KHO->>ERP: Tra cứu trạng thái pallet (OK / STAGING)
+
+  loop Từng pallet trong danh sách
+    NV_KHO->>ERP: Cập nhật trạng thái: STAGING (chuẩn bị lên container)
+    ERP->>ERP: Ghi Transaction: MOVE (→ khu Staging)
+  end
+
+  NV_KHO->>NV_KHO: Chuẩn bị hàng, xếp lên container
+
+  alt Xuất NGUYÊN pallet (trường hợp phổ biến)
+    NV_KHO->>ERP: Ghi XUAT: Pallet ID, Container ID, SL_xuất = SL_hiện_tại
+    ERP->>ERP: Cập nhật trạng thái: DA_XUAT
+    ERP->>ERP: Ghi Transaction: XUAT (nguyên pallet)
+  else Xuất DỞ pallet (full container, 1–2 pallet không đủ chỗ)
+    NV_KHO->>NV_KHO: Xác định SL thực tế lên container
+
+    alt Phần còn lại vẫn là pallet cũ vật lý
+      NV_KHO->>ERP: Ghi XUAT dở: Pallet ID, SL_đã_xuất
+      ERP->>ERP: Cập nhật SL_hiện_tại = SL_còn_lại
+      ERP->>ERP: Ghi Transaction: XUAT (xuất dở, ghi rõ SL)
+      ERP->>ERP: Trạng thái pallet cũ: OK (còn hàng)
+    else Phần còn lại thành thực thể pallet mới
+      NV_KHO->>ERP: Ghi XUAT pallet cũ toàn bộ
+      ERP->>ERP: Đóng pallet cũ: DA_XUAT
+      NV_KHO->>ERP: Tạo pallet mới cho phần còn lại
+      ERP->>ERP: Gán Pallet ID mới, ghi Transaction NHAP
+    end
+  end
+
+  CONTAINER-->>NV_KHO: Xác nhận container đã đóng
+  NV_KHO->>ERP: Chốt container: ghi nhận Container ID đã xuất
+      </div>
+    </div>
+    <div class="diagram-note">
+      ⚠️ Nguyên tắc: xử lý theo thực thể pallet vật lý sau cùng. Nếu phần còn lại về mặt vật lý là pallet mới → phải tạo record mới, không được sửa số liệu trực tiếp.
+    </div>
+  </section>
+
+  <!-- FLOW 7 -->
+  <section class="section" id="flow7">
+    <div class="section-header">
+      <div class="section-number">7</div>
+      <div class="section-title">Luồng 7 — Merge Pallet (Gom pallet)</div>
+      <span class="section-sub">Bước 10 — Không âm thầm sửa số liệu pallet cũ</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor NV_KHO as 👷 NV_KHO
+  actor QL_KHO as 🏢 QL_KHO
+  participant ERP as 💻 ERP
+
+  NV_KHO->>QL_KHO: Yêu cầu Merge: danh sách Pallet ID cần gom
+  QL_KHO->>ERP: Phê duyệt Merge
+
+  NV_KHO->>NV_KHO: Gom hàng từ các pallet nguồn vào pallet vật lý mới
+  NV_KHO->>ERP: Báo: Pallet ID nguồn + SL lấy từ mỗi pallet
+
+  loop Từng pallet nguồn
+    ERP->>ERP: Giảm SL pallet nguồn = 0 (hoặc SL còn lại)
+    ERP->>ERP: Đóng pallet nguồn (trạng thái: DA_XUAT hoặc MERGED)
+    ERP->>ERP: Ghi Transaction: XUAT (lý do: MERGE → Pallet_mới)
+  end
+
+  NV_KHO->>ERP: Tạo pallet mới: SKU, PO, SL tổng, vị trí
+  ERP->>ERP: Gán Pallet ID mới (PLT-YYMM-XXXX)
+  ERP->>ERP: Ghi Transaction: NHAP (lý do: MERGE từ [list Pallet ID cũ])
+  ERP-->>NV_KHO: Pallet ID mới + lệnh in tem
+
+  NV_KHO->>NV_KHO: In tem mới, dán lên pallet vật lý gom
+  ERP->>ERP: Cập nhật trạng thái pallet mới: CHO_QC
+      </div>
+    </div>
+    <div class="diagram-note">
+      ⚠️ Bắt buộc: Close pallet cũ → Tạo pallet mới. Tuyệt đối không âm thầm sửa SL pallet cũ để cộng dồn. Transaction phải tham chiếu đủ cả hai chiều (nguồn → đích).
+    </div>
+  </section>
+
+  <!-- FLOW 8 -->
+  <section class="section" id="flow8">
+    <div class="section-header">
+      <div class="section-number">8</div>
+      <div class="section-title">Luồng 8 — Kiểm kho / Điều chỉnh lệch</div>
+      <span class="section-sub">Bước 11 — ADJUST, HOLD, LOST</span>
+    </div>
+    <div class="diagram-box">
+      <div class="mermaid">
+sequenceDiagram
+  autonumber
+  actor NV_KHO as 👷 NV_KHO
+  actor QL_KHO as 🏢 QL_KHO
+  participant ERP as 💻 ERP
+
+  QL_KHO->>NV_KHO: Ra lệnh kiểm kê định kỳ hoặc đột xuất
+  NV_KHO->>ERP: Xuất danh sách pallet theo ERP (SL lý thuyết)
+  NV_KHO->>NV_KHO: Đếm thực tế từng pallet trong kho
+
+  NV_KHO->>QL_KHO: Báo cáo chênh lệch (pallet, SL)
+
+  alt Không có lệch → kết thúc
+    QL_KHO->>ERP: Ghi nhận kiểm kho OK
+  else Phát hiện lệch SL
+    QL_KHO->>QL_KHO: Xác minh nguyên nhân lệch
+
+    Note over QL_KHO: TUYỆT ĐỐI không sửa trực tiếp<br/>số liệu pallet trên hệ thống
+
+    QL_KHO->>ERP: Tạo ADJUST: Pallet ID, SL_thực_tế, SL_lý_thuyết, lý do
+    ERP->>ERP: Tính SL_chênh = SL_thực - SL_lý_thuyết
+    ERP->>ERP: Ghi Transaction: ADJUST (có ghi lý do, người phê duyệt)
+    ERP->>ERP: Cập nhật SL_hiện_tại = SL_thực_tế
+  else Pallet không tìm thấy — chưa chắc mất
+    NV_KHO->>ERP: Ghi HOLD: Pallet ID, lý do: INVESTIGATION
+    ERP->>ERP: Cập nhật trạng thái: HOLD
+    Note over NV_KHO: Tiếp tục tìm kiếm...
+
+    alt Tìm thấy lại
+      NV_KHO->>ERP: Cập nhật trạng thái: OK
+    else Xác định mất
+      QL_KHO->>ERP: Ghi LOST: ADJUST SL về 0, lý do: LOST
+      ERP->>ERP: Cập nhật trạng thái: LOST
+      ERP->>ERP: Ghi Transaction: ADJUST (SL = 0, lý do: LOST)
+    end
+  end
+      </div>
+    </div>
+    <div class="diagram-note">
+      ⚠️ Nguyên tắc vàng: phát hiện lệch → phải dùng ADJUST riêng với đầy đủ lý do và người phê duyệt. Không được sửa số liệu trực tiếp dù là quản lý kho.
+    </div>
+  </section>
+
+  <!-- BẢNG GIAO DỊCH -->
+  <section class="section" id="transactions">
+    <div class="section-header">
+      <div class="section-number" style="background:#10b981">📋</div>
+      <div class="section-title">Bảng Tổng hợp Loại Giao dịch (Transaction Types)</div>
+    </div>
+    <div class="diagram-box">
+      <table class="tx-table">
+        <thead>
+          <tr>
+            <th>Mã giao dịch</th>
+            <th>Tên đầy đủ</th>
+            <th>Áp dụng cho</th>
+            <th>Luồng liên quan</th>
+            <th>Điều kiện kích hoạt</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tx-code">NHAP</span></td>
+            <td>Nhập kho</td>
+            <td>TMP pallet, Finished pallet</td>
+            <td>F1, F2, F7, F8</td>
+            <td>Hàng từ NP1 vào NP2, hoặc tạo pallet mới (Merge, QC_SPLIT)</td>
+          </tr>
+          <tr>
+            <td><span class="tx-code">MOVE</span></td>
+            <td>Di chuyển vị trí</td>
+            <td>Mọi pallet</td>
+            <td>F2, F6</td>
+            <td>Pallet thay đổi vị trí trong kho (put-away, staging)</td>
+          </tr>
+          <tr>
+            <td><span class="tx-code">QC_ADJUST</span></td>
+            <td>Điều chỉnh sau QC</td>
+            <td>Finished pallet</td>
+            <td>F4B, F4C, F5</td>
+            <td>QC phát hiện SL thực tế khác tem; sửa hàng lỗi nhẹ</td>
+          </tr>
+          <tr>
+            <td><span class="tx-code">QC_SPLIT</span></td>
+            <td>Tách pallet từ QC</td>
+            <td>Finished pallet</td>
+            <td>F4C</td>
+            <td>QC gom hàng lấy ra thành pallet mới</td>
+          </tr>
+          <tr>
+            <td><span class="tx-code">XUAT</span></td>
+            <td>Xuất kho</td>
+            <td>Mọi pallet</td>
+            <td>F3, F5, F6, F7</td>
+            <td>Hàng rời khỏi NP2 (container, REWORK, MERGE)</td>
+          </tr>
+          <tr>
+            <td><span class="tx-code">HOLD</span></td>
+            <td>Tạm giữ</td>
+            <td>Finished pallet</td>
+            <td>F5, F8</td>
+            <td>Hàng lỗi chờ xử lý; pallet không tìm thấy khi kiểm kho</td>
+          </tr>
+          <tr>
+            <td><span class="tx-code">ADJUST</span></td>
+            <td>Điều chỉnh kiểm kho</td>
+            <td>Finished pallet</td>
+            <td>F8</td>
+            <td>Phát hiện lệch khi kiểm kê; không được sửa trực tiếp SL</td>
+          </tr>
+          <tr>
+            <td><span class="tx-code">LOST</span></td>
+            <td>Xác nhận mất pallet</td>
+            <td>Finished pallet</td>
+            <td>F8</td>
+            <td>Tìm kiếm xong không thấy, xác định mất — ADJUST SL về 0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  NP2 Warehouse ERP · Phân tích nghiệp vụ 11/04/2026 · Công ty TNHH Đồ Gỗ Nghĩa Phát &amp; Nghĩa Tín
+</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    sequence: {
+      actorMargin: 60,
+      messageMargin: 35,
+      mirrorActors: false,
+      useMaxWidth: true,
+      noteMargin: 12,
+      boxTextMargin: 8,
+    },
+    themeVariables: {
+      primaryColor: '#e8f0fe',
+      primaryTextColor: '#1a1a2e',
+      primaryBorderColor: '#0f3460',
+      lineColor: '#555',
+      secondaryColor: '#f0fdf4',
+      tertiaryColor: '#fef3c7',
+      fontSize: '14px'
+    }
+  });
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
