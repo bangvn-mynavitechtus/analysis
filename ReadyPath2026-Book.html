@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Ready Path 2026 — Book Edition · Mynavi TechTus Vietnam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-cyan: #00AAEB;
+    --brand-cyan-dark: #0095C4;
+    --brand-cyan-soft: #E6F7FE;
+    --brand-black: #0A0A0A;
+    --paper: #FDFCF8;
+    --paper-alt: #F5F2E8;
+    --ink: #1A1A1A;
+    --ink-2: #3D3D3D;
+    --ink-3: #6B6B6B;
+    --muted: #A0A0A0;
+    --line: #E4DFD1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Reading progress ===== */
+  .read-progress {
+    position: fixed; top: 0; left: 280px; right: 0;
+    height: 2px; z-index: 1000;
+    background: var(--line);
+  }
+  .read-progress .bar {
+    height: 100%; width: 0%;
+    background: var(--brand-cyan);
+    transition: width .1s;
+  }
+
+  /* ===== Sidebar ===== */
+  aside.sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 280px;
+    background: var(--paper-alt);
+    border-right: 1px solid var(--line);
+    padding: 40px 32px;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .brand-lockup {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; color: var(--brand-black);
+    padding-bottom: 24px; border-bottom: 1px solid var(--line);
+    margin-bottom: 28px;
+  }
+  .brand-mark { width: 42px; height: 24px; color: var(--brand-cyan); }
+  .brand-text .primary {
+    display: block; font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 900; font-size: 19px; line-height: 1;
+  }
+  .brand-text .sub {
+    display: block; font-size: 9px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--ink-3); margin-top: 3px;
+  }
+
+  .book-title {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 600;
+    line-height: 1.25; color: var(--brand-black);
+    margin-bottom: 4px;
+  }
+  .book-sub {
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--brand-cyan-dark);
+    font-weight: 700; margin-bottom: 32px;
+  }
+
+  .toc-label {
+    font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--muted); font-weight: 700; margin-bottom: 16px;
+  }
+  nav.toc { flex-grow: 1; }
+  nav.toc ol {
+    list-style: none; counter-reset: chapter;
+  }
+  nav.toc li { counter-increment: chapter; margin-bottom: 2px; }
+  nav.toc a {
+    display: grid; grid-template-columns: 38px 1fr;
+    gap: 10px; align-items: baseline;
+    padding: 10px 10px 10px 0;
+    text-decoration: none;
+    color: var(--ink-2); font-size: 14px;
+    border-left: 2px solid transparent;
+    padding-left: 14px; transition: all .25s;
+  }
+  nav.toc a::before {
+    content: counter(chapter, decimal-leading-zero);
+    font-family: 'Lora', serif;
+    font-size: 12px; color: var(--muted);
+    font-feature-settings: 'tnum';
+  }
+  nav.toc a:hover { color: var(--brand-cyan-dark); background: rgba(0,170,235,0.04); }
+  nav.toc a.active {
+    color: var(--brand-cyan-dark); font-weight: 600;
+    border-left-color: var(--brand-cyan);
+    background: rgba(0,170,235,0.08);
+  }
+  nav.toc a.active::before { color: var(--brand-cyan); }
+  nav.toc .intro-item a::before { content: "–"; }
+  nav.toc .outro-item a::before { content: "∙"; }
+
+  .side-footer {
+    margin-top: 32px; padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-size: 11px; color: var(--ink-3);
+    line-height: 1.6;
+  }
+  .side-footer strong { color: var(--ink); display: block; font-weight: 600; }
+
+  /* ===== Main content ===== */
+  main {
+    margin-left: 280px;
+    padding: 80px 80px 80px;
+    max-width: 800px;
+  }
+
+  /* ===== Front matter / hero ===== */
+  .front-matter {
+    padding: 40px 0 100px;
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+  }
+  .front-matter .stamp {
+    display: inline-block; padding: 5px 16px;
+    background: var(--brand-cyan-soft);
+    color: var(--brand-cyan-dark);
+    font-size: 11px; letter-spacing: 2px; font-weight: 700;
+    border-radius: 2px; text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+  .front-matter h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(44px, 6vw, 76px);
+    font-weight: 600; line-height: 1.1;
+    color: var(--brand-black);
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .front-matter h1 em {
+    font-style: italic; color: var(--brand-cyan);
+  }
+  .front-matter .year {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 18px; letter-spacing: 8px;
+    color: var(--ink-3); font-weight: 400;
+    margin-bottom: 40px;
+  }
+  .front-matter .epigraph {
+    font-family: 'Lora', serif;
+    font-style: italic; font-size: 20px;
+    color: var(--ink-2); line-height: 1.6;
+    max-width: 560px; margin: 40px auto 32px;
+  }
+  .author-block {
+    margin-top: 60px; display: inline-block;
+    padding-top: 24px; border-top: 1px solid var(--line);
+  }
+  .author-block small {
+    display: block; font-size: 10px; letter-spacing: 2px;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 6px;
+  }
+  .author-block strong { font-size: 16px; color: var(--ink); font-weight: 600; }
+  .author-block span { display: block; font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+
+  /* ===== Chapter ===== */
+  .chapter {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .chapter-head {
+    margin-bottom: 56px;
+  }
+  .chapter-num {
+    font-family: 'Lora', serif;
+    font-size: 13px; letter-spacing: 4px;
+    color: var(--brand-cyan-dark);
+    font-weight: 600; text-transform: uppercase;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 16px;
+  }
+  .chapter-num::after {
+    content: ""; flex-grow: 1; height: 1px;
+    background: var(--line);
+  }
+  .chapter-head h2 {
+    font-family: 'Lora', serif;
+    font-size: clamp(36px, 4.5vw, 54px);
+    font-weight: 600; line-height: 1.15;
+    color: var(--brand-black);
+    margin-bottom: 20px; letter-spacing: -0.01em;
+  }
+  .chapter-head h2 em { color: var(--brand-cyan); font-style: italic; }
+  .chapter-head .dek {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: 19px; color: var(--ink-2); line-height: 1.6;
+    max-width: 620px;
+  }
+
+  /* ===== Chapter 1: Why — prose with drop cap ===== */
+  .prose p { font-size: 16px; line-height: 1.85; color: var(--ink-2); margin-bottom: 22px; }
+  .prose p.lead {
+    font-family: 'Lora', serif; font-size: 20px; font-weight: 400;
+    color: var(--ink); line-height: 1.6;
+  }
+  .prose p.lead::first-letter {
+    font-family: 'Lora', serif;
+    font-size: 72px; font-weight: 600;
+    float: left; line-height: 0.85;
+    margin: 10px 12px 0 -2px;
+    color: var(--brand-cyan);
+  }
+  .prose .tag {
+    display: inline; padding: 1px 8px;
+    background: var(--brand-cyan-soft);
+    color: var(--brand-cyan-dark);
+    border-radius: 3px; font-weight: 700; font-size: 0.92em;
+  }
+  .prose h4 {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--brand-black); margin: 40px 0 14px;
+  }
+  .prose h4::before {
+    content: "§"; color: var(--brand-cyan);
+    margin-right: 10px; font-weight: 400;
+  }
+
+  /* ===== Chapter 2: Values — numbered list ===== */
+  .values-list { counter-reset: val; margin-top: 12px; }
+  .value-entry {
+    counter-increment: val;
+    padding: 36px 0;
+    border-bottom: 1px dashed var(--line);
+    display: grid; grid-template-columns: 80px 1fr; gap: 28px;
+  }
+  .value-entry:last-child { border-bottom: none; }
+  .value-entry .big-num {
+    font-family: 'Lora', serif;
+    font-size: 56px; font-weight: 600; line-height: 1;
+    color: var(--brand-cyan);
+    font-feature-settings: 'tnum';
+  }
+  .value-entry .big-num::before { content: counter(val, decimal-leading-zero); }
+  .value-entry h3 {
+    font-family: 'Lora', serif;
+    font-size: 28px; font-weight: 600; color: var(--brand-black);
+    margin-bottom: 4px;
+  }
+  .value-entry .en {
+    font-size: 11px; letter-spacing: 3px;
+    color: var(--brand-cyan-dark); text-transform: uppercase;
+    font-weight: 700; display: block; margin-bottom: 14px;
+  }
+  .value-entry .motto {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: 17px; color: var(--ink);
+    padding: 10px 16px;
+    background: var(--brand-cyan-soft);
+    border-left: 3px solid var(--brand-cyan);
+    margin-bottom: 14px;
+  }
+  .value-entry p { font-size: 15px; color: var(--ink-2); line-height: 1.8; }
+
+  /* ===== Chapter 3: Pillars — side-by-side cards ===== */
+  .pillars {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: 20px;
+  }
+  .pillar-entry {
+    padding: 32px; background: var(--paper);
+    position: relative;
+  }
+  .pillar-entry .p-num {
+    font-family: 'Lora', serif;
+    font-size: 13px; color: var(--brand-cyan);
+    letter-spacing: 2px; font-weight: 600;
+    display: block; margin-bottom: 18px;
+  }
+  .pillar-entry h3 {
+    font-family: 'Lora', serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--brand-black); margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .pillar-entry p {
+    font-size: 14px; color: var(--ink-2);
+    font-style: italic; line-height: 1.75;
+  }
+
+  /* ===== Chapter 4: Ready Path ===== */
+  .ready-section {
+    padding: 50px 0 20px;
+  }
+  .ready-section .quote-card {
+    padding: 40px 48px;
+    background: var(--paper-alt);
+    border-left: 4px solid var(--brand-cyan);
+    margin: 28px 0;
+  }
+  .ready-section .quote-card h4 {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: 22px; color: var(--brand-black);
+    margin-bottom: 14px;
+  }
+  .ready-section .quote-card p {
+    font-size: 15px; color: var(--ink-2); line-height: 1.85;
+  }
+  .ready-stamp {
+    margin-top: 40px; padding: 48px;
+    background: var(--brand-black); color: #fff;
+    text-align: center; border-radius: 4px;
+  }
+  .ready-stamp .big {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 72px; font-weight: 900;
+    color: var(--brand-cyan); letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .ready-stamp p {
+    margin-top: 12px; font-size: 15px; color: #D1D5DB;
+    max-width: 500px; margin-left: auto; margin-right: auto;
+    line-height: 1.75;
+  }
+  .ready-stamp p strong { color: var(--brand-cyan); font-weight: 700; }
+
+  /* ===== Epilogue (Outro) ===== */
+  .epilogue {
+    padding: 100px 0 60px; text-align: center;
+    border-bottom: none;
+  }
+  .epilogue .ornament {
+    font-family: 'Lora', serif; color: var(--brand-cyan);
+    font-size: 28px; letter-spacing: 18px; margin-bottom: 24px;
+  }
+  .epilogue blockquote {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: 20px; color: var(--ink); line-height: 1.7;
+    max-width: 640px; margin: 0 auto 40px;
+  }
+  .epilogue blockquote strong { color: var(--brand-cyan-dark); font-style: normal; }
+  .colophon {
+    margin-top: 80px; padding-top: 40px;
+    border-top: 1px solid var(--line);
+    font-size: 12px; color: var(--ink-3);
+    line-height: 1.8;
+  }
+  .colophon svg { width: 60px; height: 35px; color: var(--brand-cyan); margin-bottom: 12px; }
+  .colophon .mark-name {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 20px; font-weight: 900; color: var(--brand-black);
+  }
+
+  @media (max-width: 1000px) {
+    aside.sidebar {
+      position: relative;
+      width: 100%; height: auto;
+      border-right: none; border-bottom: 1px solid var(--line);
+    }
+    main { margin-left: 0; padding: 40px 28px; }
+    .read-progress { left: 0; }
+    .pillars { grid-template-columns: 1fr; }
+    .value-entry { grid-template-columns: 60px 1fr; gap: 20px; }
+    .value-entry .big-num { font-size: 44px; }
+  }
+  @media print {
+    aside.sidebar, .read-progress { display: none; }
+    main { margin-left: 0; padding: 20px 40px; }
+    .chapter { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="tt-logo" viewBox="0 0 168 97">
+    <path fill="currentColor" d="M 164.340 13.289 C 165.992 9.395 164.152 5.129 160.168 3.672 C 156.191 2.215 152.293 4.422 150.246 8.055 C 146.930 13.934 129.742 46.383 126.859 51.762 C 123.977 57.145 120.348 64.832 117.340 63.656 C 114.574 62.578 111.332 50.770 109.949 47.398 C 107.496 41.406 102.496 34.285 94.129 36.082 C 87.734 37.449 84.094 42.473 78.297 53.559 C 75.109 59.645 73.113 63.660 70.219 67.602 C 64.270 75.695 60.941 62.379 58.992 55.492 C 56.375 46.250 51.590 33.176 41.113 33.176 C 35.262 33.176 29.016 36.594 21.230 49.152 C 16.691 56.477 6.059 76.992 4.492 80.648 C 2.820 84.535 4.250 88.762 8.137 90.434 C 12.027 92.105 15.844 90.379 18.145 86.824 C 25.609 75.262 27.656 70.750 31.477 65.434 C 35.566 59.785 41.113 54.719 45.336 68.324 C 47.996 76.887 52.641 90.934 65.203 91.035 C 72.762 91.102 80.602 84.582 84.270 78.363 C 88.422 71.332 89.465 67.574 92.629 64.184 C 94.242 62.457 96.641 61.832 98.902 66.863 C 101.082 71.727 105.586 87.098 113.645 90.457 C 125.020 95.199 135.766 72.191 139.477 64.855 C 142.469 58.941 163.020 16.395 164.340 13.289 Z"/>
+    <path fill="currentColor" d="M 158.500 81.512 C 158.500 86.816 154.203 91.113 148.898 91.113 C 143.594 91.113 139.293 86.816 139.293 81.512 C 139.293 76.207 143.594 71.906 148.898 71.906 C 154.203 71.906 158.500 76.207 158.500 81.512 Z"/>
+  </symbol>
+</svg>
+
+<div class="read-progress"><div class="bar" id="readBar"></div></div>
+
+<aside class="sidebar">
+  <a href="#front" class="brand-lockup">
+    <svg class="brand-mark"><use href="#tt-logo"/></svg>
+    <span class="brand-text">
+      <span class="primary">mynavi</span>
+      <span class="sub">Mynavi TechTus VN</span>
+    </span>
+  </a>
+
+  <div class="book-title">The Ready Path</div>
+  <div class="book-sub">Book Edition · 2026</div>
+
+  <div class="toc-label">Mục lục</div>
+  <nav class="toc">
+    <ol>
+      <li class="intro-item"><a href="#front">Lời tựa</a></li>
+      <li><a href="#chapter-1">Tại sao chúng ta ở đây</a></li>
+      <li><a href="#chapter-2">Bốn từ khóa năng lượng</a></li>
+      <li><a href="#chapter-3">TechTus Way — Bốn trụ cột</a></li>
+      <li><a href="#chapter-4">Thông điệp Ready Path</a></li>
+      <li class="outro-item"><a href="#epilogue">Lời kết</a></li>
+    </ol>
+  </nav>
+
+  <div class="side-footer">
+    <strong>CEO Ông Ích Nguyên</strong>
+    Trình bày — 2026
+    <br><br>
+    <strong>North Star</strong>
+    We make Wow, we make Smile
+  </div>
+</aside>
+
+<main>
+
+<section id="front" class="front-matter">
+  <span class="stamp">Chronicle · 2026</span>
+  <h1>The Ready <em>Path</em></h1>
+  <div class="year">2 · 0 · 2 · 6</div>
+  <p class="epigraph">
+    "Không phải ai cũng đi cùng tốc độ — nhưng tất cả có thể đi cùng một hướng."
+  </p>
+  <div class="author-block">
+    <small>Được trình bày bởi</small>
+    <strong>CEO Ông Ích Nguyên</strong>
+    <span>Toàn thể đội ngũ Mynavi TechTus Vietnam</span>
+  </div>
+</section>
+
+<section id="chapter-1" class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">Chương Một</div>
+    <h2>Tại sao chúng ta <em>ở đây</em>?</h2>
+    <p class="dek">Trước khi nói về việc chúng ta nhận được gì, hãy nói về nụ cười đầy sức sống tại TechTus.</p>
+  </div>
+
+  <div class="prose">
+    <p class="lead">
+      Tại TechTus, chúng ta không phải là những <span class="tag">Human Resource</span>,
+      chúng ta là những <span class="tag">Human Vitality</span>. Vì chúng ta tin vào <strong>sức sống</strong>
+      trong mỗi con người — một thứ không thể quy đổi thành giờ công, không thể gán vào một ô bảng.
+    </p>
+
+    <h4>Thông điệp cốt lõi</h4>
+    <p>
+      Mọi dòng code bạn viết, mọi giải pháp bạn đưa ra đều hướng về một đích đến duy nhất:
+      <span class="tag">We make Wow, we make Smile</span>. Wow cho khách hàng và Smile cho chính
+      chúng ta — hai cảm xúc không thể tách rời, vì chúng là hai mặt của cùng một giá trị.
+    </p>
+
+    <h4>Bản đồ tăng trưởng</h4>
+    <p>
+      Công ty là môi trường để bạn tiến bộ, cùng kiến tạo giá trị mới. <span class="tag">Techie Skill Matrix</span>
+      chính là bản đồ để bạn không bị lạc đường trên hành trình trưởng thành của chính mình — một la bàn,
+      không phải một cái thước đo để xếp hạng.
+    </p>
+  </div>
+</section>
+
+<section id="chapter-2" class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">Chương Hai</div>
+    <h2>Bốn từ khóa <em>năng lượng</em></h2>
+    <p class="dek">La bàn định hướng cho mọi quyết định — từ dòng code đến giao tiếp trong team.</p>
+  </div>
+
+  <div class="values-list">
+    <div class="value-entry">
+      <div class="big-num"></div>
+      <div>
+        <h3>Minh bạch</h3>
+        <span class="en">Transparency</span>
+        <div class="motto">"Mặt phẳng sự thật"</div>
+        <p>Làm việc trên dữ liệu khách quan. Tránh để cảm xúc lo lắng che mờ những điều chưa đúng. Dùng dữ liệu và cảm nhận hiện trường (Genba) để chia sẻ thẳng thắn.</p>
+      </div>
+    </div>
+    <div class="value-entry">
+      <div class="big-num"></div>
+      <div>
+        <h3>Thấu cảm</h3>
+        <span class="en">Empathy</span>
+        <div class="motto">"Tư duy Người dùng kế tiếp"</div>
+        <p>Hãy code sao cho người QC và khách hàng thấy "dễ thở" nhất. Đặt mình vào vị trí của người nhận kết quả từ mình để hành động.</p>
+      </div>
+    </div>
+    <div class="value-entry">
+      <div class="big-num"></div>
+      <div>
+        <h3>Tận tâm</h3>
+        <span class="en">Customer Success</span>
+        <div class="motto">"Đóng gói giá trị tinh hoa"</div>
+        <p>Không bàn giao "rác", chỉ bàn giao sự chỉn chu. Mỗi nỗ lực của bạn phải được đóng gói thành giá trị thực thụ cho khách hàng.</p>
+      </div>
+    </div>
+    <div class="value-entry">
+      <div class="big-num"></div>
+      <div>
+        <h3>Hòa hợp</h3>
+        <span class="en">Harmony</span>
+        <div class="motto">"Vận hành không ma sát"</div>
+        <p>Tuân thủ tiêu chuẩn, tinh thần hợp tác để khơi thông điểm nghẽn, giúp Team và tổ chức chạy mượt mà, tinh gọn và tối ưu năng lượng.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="chapter-3" class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">Chương Ba</div>
+    <h2>TechTus Way — bốn <em>trụ cột</em></h2>
+    <p class="dek">Cách chúng ta tư duy và thực thi: từ nhận thức, tiên phong, đến dẫn dắt.</p>
+  </div>
+
+  <div class="pillars">
+    <div class="pillar-entry">
+      <span class="p-num">I · Trụ cột thứ nhất</span>
+      <h3>Nhận thức &amp; Đơn giản hóa</h3>
+      <p>"Hiểu được bản chất bằng logic và dữ liệu kết hợp cảm nhận thực tế xung quanh để tìm thấy giải pháp tinh gọn nhất."</p>
+    </div>
+    <div class="pillar-entry">
+      <span class="p-num">II · Trụ cột thứ hai</span>
+      <h3>Tiên phong &amp; Nâng tầm</h3>
+      <p>"Luôn ở trạng thái Ready trước mọi làn sóng công nghệ; không ngừng khai phóng tiềm năng và thực hành bền bỉ để nâng cấp giá trị bản thân, tạo ra những chuẩn mực mới cho tổ chức."</p>
+    </div>
+    <div class="pillar-entry">
+      <span class="p-num">III · Trụ cột thứ ba</span>
+      <h3>Thực thi &amp; Đóng gói giá trị</h3>
+      <p>"Dấn thân thực thi qua từng vòng lặp; đo lường chuẩn xác để đóng gói nỗ lực thành những thành quả trọn vẹn, sẵn sàng trao gửi giá trị thực."</p>
+    </div>
+    <div class="pillar-entry">
+      <span class="p-num">IV · Trụ cột thứ tư</span>
+      <h3>Dẫn dắt &amp; Thấu cảm</h3>
+      <p>"Chủ động kiến tạo mục tiêu, gắn kết, thấu cảm và truyền cảm hứng khơi thông nguồn lực thúc đẩy đội ngũ đạt thành quả vượt kỳ vọng."</p>
+    </div>
+  </div>
+</section>
+
+<section id="chapter-4" class="chapter">
+  <div class="chapter-head">
+    <div class="chapter-num">Chương Bốn</div>
+    <h2>Thông điệp <em>"The Ready Path"</em></h2>
+    <p class="dek">Không phải ai cũng đi cùng tốc độ — nhưng tất cả có thể đi cùng một hướng.</p>
+  </div>
+
+  <div class="ready-section">
+    <div class="quote-card">
+      <h4>Chấp nhận sự khác biệt</h4>
+      <p>
+        Mỗi người có một điểm xuất phát và tốc độ khác nhau. Có người mất <strong>1 năm</strong>,
+        có người mất <strong>2 năm</strong> để lên một bậc. Điều đó không quan trọng bằng việc bạn đang
+        <strong>không ngừng tiến về phía trước</strong>.
+      </p>
+    </div>
+
+    <div class="ready-stamp">
+      <div class="big">READY?</div>
+      <p>
+        Từ khóa <strong>READY</strong> của năm nay là cơn gió để đẩy con thuyền của bạn đi nhanh hơn.
+        Khi bạn nâng tầm kỹ năng, bạn đang tự xây dựng <strong>di sản và giá trị bền vững</strong> cho chính mình.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="epilogue" class="epilogue">
+  <div class="ornament">§ § §</div>
+  <blockquote>
+    "Công ty không ép buộc các bạn làm việc chăm chỉ hơn, công ty cần các bạn làm việc với sự
+    <strong>nhận thức rõ ràng hơn</strong> và <strong>đóng gói giá trị tốt hơn</strong>.
+    Hãy để Techie Skill Matrix là người bạn đồng hành, không phải là gánh nặng."
+  </blockquote>
+
+  <div class="colophon">
+    <svg><use href="#tt-logo"/></svg>
+    <div class="mark-name">mynavi</div>
+    <div>Mynavi TechTus Vietnam · The Ready Path 2026</div>
+    <div>Book Edition · In tạm dạng điện tử</div>
+  </div>
+</section>
+
+</main>
+
+<script>
+  // Reading progress
+  const bar = document.getElementById('readBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const p = (window.scrollY / h) * 100;
+    bar.style.width = Math.min(100, Math.max(0, p)) + '%';
+  }, { passive: true });
+
+  // Active TOC link
+  const links = document.querySelectorAll('nav.toc a');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href')));
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => s && io.observe(s));
+</script>
+</body>
+</html>
