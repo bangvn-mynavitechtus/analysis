@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Ready Path 2026 — TechTus · Dark Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0: #05060D;
+    --bg-1: #0A0B18;
+    --bg-2: #11132A;
+    --ink: #E7E9F5;
+    --ink-2: #B6BCD6;
+    --muted: #7A82A3;
+    --line: rgba(255,255,255,0.08);
+
+    --c-blue: #3B82F6;
+    --c-purple: #A855F7;
+    --c-cyan: #22D3EE;
+    --c-indigo: #6366F1;
+
+    --g-main: linear-gradient(135deg, #3B82F6 0%, #A855F7 50%, #22D3EE 100%);
+    --g-main-soft: linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(168,85,247,0.2) 50%, rgba(34,211,238,0.2) 100%);
+    --g-card: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+
+    --glow-blue: 0 0 60px rgba(59,130,246,0.35);
+    --glow-purple: 0 0 60px rgba(168,85,247,0.35);
+    --glow-cyan: 0 0 60px rgba(34,211,238,0.3);
+
+    --radius-md: 18px;
+    --radius-lg: 28px;
+    --radius-xl: 36px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Be Vietnam Pro', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--bg-0);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ============== GLOBAL BACKGROUND (mesh) ============== */
+  .bg-mesh {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 800px 500px at 10% 0%, rgba(59,130,246,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 800px 500px at 90% 30%, rgba(168,85,247,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 700px 500px at 50% 80%, rgba(34,211,238,0.12) 0%, transparent 60%),
+      var(--bg-0);
+  }
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.7) 0%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.7) 0%, transparent 85%);
+  }
+
+  /* ============== TYPOGRAPHY HELPERS ============== */
+  .mono {
+    font-family: 'Space Grotesk', monospace;
+    letter-spacing: 0.5px;
+  }
+  .text-gradient {
+    background: var(--g-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* ============== PROGRESS + NAV ============== */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: var(--g-main);
+    z-index: 1000;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 14px rgba(168,85,247,0.7);
+  }
+
+  .nav {
+    position: fixed;
+    top: 20px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    padding: 6px;
+    border-radius: 999px;
+    background: rgba(10,11,24,0.6);
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.02);
+    display: flex;
+    gap: 2px;
+    max-width: calc(100vw - 32px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .nav a:hover { color: #fff; background: rgba(255,255,255,0.05); }
+  .nav a.active {
+    background: var(--g-main);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+  }
+
+  /* ============== PDF BUTTON ============== */
+  .pdf-btn {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    z-index: 999;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-family: 'Space Grotesk', inherit;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    background: rgba(10,11,24,0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: fixed;
+  }
+  .pdf-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--g-main);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  .pdf-btn:hover { transform: translateY(-3px); border-color: transparent; }
+  .pdf-btn:hover::before { opacity: 1; }
+  .pdf-btn svg { width: 16px; height: 16px; }
+
+  /* ============== LAYOUT ============== */
+  section { padding: 140px 24px; position: relative; }
+  .container { max-width: 1160px; margin: 0 auto; }
+
+  /* ============== CARD BASE ============== */
+  .card {
+    position: relative;
+    background: var(--g-card);
+    backdrop-filter: blur(20px) saturate(130%);
+    -webkit-backdrop-filter: blur(20px) saturate(130%);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    overflow: hidden;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.5s ease,
+                box-shadow 0.5s ease;
+  }
+  /* Gradient border (pseudo) */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(59,130,246,0.5), rgba(168,85,247,0.5), rgba(34,211,238,0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .card:hover { transform: translateY(-6px); border-color: transparent; box-shadow: 0 24px 80px rgba(0,0,0,0.5); }
+  .card:hover::before { opacity: 1; }
+
+  /* Subtle corner glow on every card */
+  .card::after {
+    content: "";
+    position: absolute;
+    top: -40%; left: -20%;
+    width: 60%; height: 60%;
+    background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .card:hover::after { opacity: 1; }
+
+  /* ============== HERO ============== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.45;
+    animation: float 14s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .hero .orb-1 { width: 500px; height: 500px; background: var(--c-blue); top: -120px; left: -120px; }
+  .hero .orb-2 { width: 600px; height: 600px; background: var(--c-purple); top: 10%; right: -180px; animation-delay: -4s; }
+  .hero .orb-3 { width: 420px; height: 420px; background: var(--c-cyan); bottom: -120px; left: 30%; animation-delay: -8s; }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(40px, -40px) scale(1.15); }
+  }
+
+  .hero-card {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 960px;
+    padding: 72px 48px;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 36px;
+  }
+  .hero-badge .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--c-cyan);
+    box-shadow: 0 0 10px var(--c-cyan);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { transform: scale(1.4); opacity: 0.6; } }
+
+  .hero h1 {
+    font-size: clamp(52px, 9vw, 108px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -3px;
+    margin-bottom: 28px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+  }
+  .hero h1 .line-1 {
+    display: block;
+    background: linear-gradient(180deg, #fff 0%, #C7D2FE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero h1 .line-2 {
+    display: block;
+    background: var(--g-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-subtitle {
+    font-size: clamp(17px, 2vw, 21px);
+    font-weight: 300;
+    color: var(--ink-2);
+    max-width: 720px;
+    margin: 0 auto 44px;
+    line-height: 1.7;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-top: 48px;
+  }
+  .hero-meta > div {
+    background: rgba(10,11,24,0.6);
+    padding: 22px 20px;
+    text-align: left;
+  }
+  .hero-meta span {
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .hero-meta strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    animation: bob 2.4s ease-in-out infinite;
+    z-index: 2;
+  }
+  @keyframes bob { 50% { transform: translate(-50%, 8px); } }
+
+  /* ============== SECTION HEADER ============== */
+  .section-header { margin-bottom: 72px; max-width: 760px; }
+  .section-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--c-cyan);
+    padding: 6px 14px;
+    background: rgba(34,211,238,0.08);
+    border: 1px solid rgba(34,211,238,0.25);
+    border-radius: 999px;
+    margin-bottom: 24px;
+  }
+  .section-tag .dash { width: 18px; height: 1px; background: var(--c-cyan); }
+  .section-header h2 {
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  .section-header h2 em {
+    font-style: normal;
+    background: var(--g-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .section-header p {
+    color: var(--ink-2);
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  /* ============== PART 1 : CARDS ============== */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .icon-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--g-main);
+    opacity: 0.18;
+  }
+  .icon-wrap svg {
+    width: 26px; height: 26px;
+    position: relative;
+    z-index: 1;
+    color: #fff;
+    filter: drop-shadow(0 0 6px rgba(168,85,247,0.5));
+  }
+
+  .feat-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+  .feat-card p {
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .feat-card .chip {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+    background: rgba(99,102,241,0.15);
+    border: 1px solid rgba(99,102,241,0.3);
+    color: #C7D2FE;
+    font-size: 13px;
+    margin: 0 2px;
+  }
+
+  /* ============== PART 2 : CORE VALUES (ranked cards) ============== */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .value-card {
+    padding: 40px 36px;
+  }
+  .value-num {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--c-cyan);
+    margin-bottom: 16px;
+  }
+  .value-card h3 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .value-card .en {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--c-purple);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .value-card .line {
+    width: 40px;
+    height: 2px;
+    background: var(--g-main);
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  .value-card .motto {
+    font-style: italic;
+    color: var(--ink);
+    font-size: 15px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.03);
+    border-left: 2px solid var(--c-cyan);
+    border-radius: 0 8px 8px 0;
+  }
+  .value-card p {
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* ============== PART 3 : TECHTUS WAY (pillar cards) ============== */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .pillar-card {
+    padding: 44px 36px;
+    position: relative;
+  }
+  .pillar-index {
+    position: absolute;
+    top: 24px; right: 28px;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+  .pillar-icon {
+    width: 60px; height: 60px;
+    border-radius: 18px;
+    background: var(--g-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    box-shadow: 0 16px 40px rgba(168,85,247,0.35);
+  }
+  .pillar-icon svg { width: 28px; height: 28px; color: #fff; }
+  .pillar-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 14px;
+    letter-spacing: -0.3px;
+  }
+  .pillar-card p {
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* ============== PART 4 : READY PATH (2 featured cards) ============== */
+  .ready-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 24px;
+  }
+  @media (max-width: 900px) { .ready-grid { grid-template-columns: 1fr; } }
+
+  .ready-card {
+    padding: 48px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ready-card .tag-line {
+    display: inline-block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink-2);
+    margin-bottom: 26px;
+  }
+  .ready-card h3 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    letter-spacing: -0.8px;
+  }
+  .ready-card p {
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .ready-card.glow {
+    background: linear-gradient(140deg, rgba(59,130,246,0.12) 0%, rgba(168,85,247,0.12) 50%, rgba(34,211,238,0.12) 100%);
+  }
+  .ready-card.glow::before { opacity: 1; }
+  .ready-card .mega-word {
+    font-size: clamp(80px, 13vw, 148px);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -6px;
+    background: var(--g-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 20px 0 24px;
+    filter: drop-shadow(0 0 40px rgba(168,85,247,0.4));
+  }
+
+  /* ============== OUTRO ============== */
+  #outro { padding: 160px 24px; }
+  .outro-card {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 60px;
+    text-align: center;
+    position: relative;
+  }
+  .outro-card .quote-mark {
+    font-family: 'Space Grotesk', serif;
+    font-size: 120px;
+    line-height: 1;
+    background: var(--g-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: -20px;
+    display: block;
+    font-weight: 700;
+  }
+  .outro-card blockquote {
+    font-size: clamp(20px, 2.5vw, 26px);
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.7;
+    margin-bottom: 50px;
+    font-style: italic;
+  }
+  .outro-card blockquote strong {
+    font-weight: 600;
+    font-style: normal;
+    background: var(--g-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .outro-card .ready-cta {
+    font-size: clamp(64px, 11vw, 140px);
+    font-weight: 900;
+    letter-spacing: -5px;
+    line-height: 0.9;
+    background: var(--g-main);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 28px 0 16px;
+    filter: drop-shadow(0 0 60px rgba(34,211,238,0.3));
+  }
+  .outro-card .ready-cta-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  /* ============== FOOTER ============== */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.5px;
+  }
+  footer strong { color: var(--ink); font-weight: 500; }
+
+  /* ============== REVEAL ANIMATIONS ============== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: none; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.15s; opacity: 1; transform: none; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.25s; opacity: 1; transform: none; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.35s; opacity: 1; transform: none; }
+
+  /* ============== PRINT ============== */
+  @media print {
+    body { background: #fff; color: #111; }
+    .bg-mesh, .bg-grid, .hero .orb { display: none !important; }
+    .nav, .pdf-btn, .progress-bar, .scroll-hint { display: none !important; }
+    .card, .hero-card, .outro-card {
+      background: #fff !important;
+      border: 1px solid #ccc !important;
+      box-shadow: none !important;
+      color: #111 !important;
+    }
+    .card::before, .card::after { display: none !important; }
+    .hero h1 .line-1 { -webkit-text-fill-color: #111; color: #111; }
+    .hero h1 .line-2, .section-header h2 em, .ready-card .mega-word,
+    .outro-card .ready-cta, .outro-card blockquote strong, .outro-card .quote-mark {
+      -webkit-text-fill-color: #4F46E5 !important;
+    }
+    .section-header h2, .feat-card h3, .value-card h3, .pillar-card h3,
+    .ready-card h3, .hero-meta strong { color: #111 !important; }
+    .section-header p, .feat-card p, .value-card p, .pillar-card p,
+    .ready-card p, .outro-card blockquote, .hero-subtitle { color: #333 !important; }
+    .pillar-icon { background: #6366F1 !important; box-shadow: none !important; }
+    .icon-wrap::before { background: #6366F1; opacity: 0.15; }
+    .reveal, .reveal-stagger > * { opacity: 1 !important; transform: none !important; }
+    section { padding: 50px 24px !important; page-break-inside: avoid; }
+  }
+
+  @media (max-width: 640px) {
+    section { padding: 100px 20px; }
+    .hero-card { padding: 56px 28px; }
+    .hero-meta { grid-template-columns: 1fr; }
+    .card, .ready-card, .value-card, .pillar-card { padding: 32px 28px; }
+    .outro-card { padding: 56px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <a href="#hero" class="active">Intro</a>
+  <a href="#part-1">01 Why</a>
+  <a href="#part-2">02 Values</a>
+  <a href="#part-3">03 Way</a>
+  <a href="#part-4">04 Ready</a>
+  <a href="#outro">Final</a>
+</nav>
+
+<button class="pdf-btn" onclick="window.print()" title="Tải xuống PDF">
+  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/>
+  </svg>
+  Download PDF
+</button>
+
+<!-- ============== HERO ============== -->
+<section id="hero" class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-card card">
+    <span class="hero-badge">
+      <span class="dot"></span>
+      <span>TechTus · Presentation 2026</span>
+    </span>
+    <h1>
+      <span class="line-1">The Ready Path</span>
+      <span class="line-2">2026</span>
+    </h1>
+    <p class="hero-subtitle">
+      Hành trình nâng tầm sức sống, kỹ năng và giá trị bền vững — dành cho toàn thể đội ngũ TechTus.
+      <br/>We make <em style="font-style:normal;color:#22D3EE">Wow</em>, we make <em style="font-style:normal;color:#A855F7">Smile</em>.
+    </p>
+    <div class="hero-meta">
+      <div>
+        <span>Presenter</span>
+        <strong>CEO Ông Ích Nguyên</strong>
+      </div>
+      <div>
+        <span>Audience</span>
+        <strong>Toàn thể đội ngũ TechTus</strong>
+      </div>
+      <div>
+        <span>North Star</span>
+        <strong>Human Vitality</strong>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll to explore ↓</div>
+</section>
+
+<!-- ============== PART 1 : WHY ============== -->
+<section id="part-1">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag"><span class="dash"></span>Phần 01 · Why</span>
+      <h2>Tại sao chúng ta <em>ở đây?</em></h2>
+      <p>Trước khi nói về việc chúng ta nhận được gì, hãy nói về nụ cười đầy sức sống tại TechTus.</p>
+    </div>
+
+    <div class="grid-3 reveal-stagger">
+      <div class="card feat-card">
+        <div class="icon-wrap">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"/>
+          </svg>
+        </div>
+        <h3>Kết nối Sứ mệnh</h3>
+        <p>Tại TechTus, chúng ta không phải là những <span class="chip">Human Resource</span>, chúng ta là những <span class="chip">Human Vitality</span>. Vì chúng ta tin vào <strong>sức sống</strong> trong mỗi con người.</p>
+      </div>
+
+      <div class="card feat-card">
+        <div class="icon-wrap">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+          </svg>
+        </div>
+        <h3>Thông điệp cốt lõi</h3>
+        <p>Mọi dòng code bạn viết, mọi giải pháp bạn đưa ra đều hướng về một đích đến duy nhất: <span class="chip">We make Wow, we make Smile</span>. Wow cho khách hàng và Smile cho chính chúng ta.</p>
+      </div>
+
+      <div class="card feat-card">
+        <div class="icon-wrap">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+        </div>
+        <h3>Bản đồ tăng trưởng</h3>
+        <p>Công ty là môi trường để bạn tiến bộ, cùng kiến tạo giá trị mới. <span class="chip">Techie Skill Matrix</span> chính là bản đồ để bạn không bị lạc đường trên hành trình trưởng thành của chính mình.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PART 2 : CORE VALUES ============== -->
+<section id="part-2">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag"><span class="dash"></span>Phần 02 · Core Values</span>
+      <h2>4 từ khóa <em>năng lượng</em></h2>
+      <p>La bàn định hướng cho mọi quyết định — từ dòng code đến giao tiếp trong team.</p>
+    </div>
+
+    <div class="values-grid reveal-stagger">
+      <div class="card value-card">
+        <div class="value-num">VALUE 01</div>
+        <h3>Minh bạch</h3>
+        <span class="en">Transparency</span>
+        <div class="line"></div>
+        <div class="motto">"Mặt phẳng sự thật"</div>
+        <p>Làm việc trên dữ liệu khách quan. Tránh để cảm xúc lo lắng che mờ những điều chưa đúng. Dùng dữ liệu và cảm nhận hiện trường (Genba) để chia sẻ thẳng thắn.</p>
+      </div>
+
+      <div class="card value-card">
+        <div class="value-num">VALUE 02</div>
+        <h3>Thấu cảm</h3>
+        <span class="en">Empathy</span>
+        <div class="line"></div>
+        <div class="motto">"Tư duy Người dùng kế tiếp"</div>
+        <p>Hãy code sao cho người QC và khách hàng thấy "dễ thở" nhất. Đặt mình vào vị trí của người nhận kết quả từ mình để hành động.</p>
+      </div>
+
+      <div class="card value-card">
+        <div class="value-num">VALUE 03</div>
+        <h3>Tận tâm</h3>
+        <span class="en">Customer Success</span>
+        <div class="line"></div>
+        <div class="motto">"Đóng gói giá trị tinh hoa"</div>
+        <p>Không bàn giao "rác", chỉ bàn giao sự chỉn chu. Mỗi nỗ lực của bạn phải được đóng gói thành giá trị thực thụ cho khách hàng.</p>
+      </div>
+
+      <div class="card value-card">
+        <div class="value-num">VALUE 04</div>
+        <h3>Hòa hợp</h3>
+        <span class="en">Harmony</span>
+        <div class="line"></div>
+        <div class="motto">"Vận hành không ma sát"</div>
+        <p>Tuân thủ tiêu chuẩn, tinh thần hợp tác để khơi thông điểm nghẽn, giúp Team và tổ chức chạy mượt mà, tinh gọn và tối ưu năng lượng.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PART 3 : TECHTUS WAY ============== -->
+<section id="part-3">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag"><span class="dash"></span>Phần 03 · Operating System</span>
+      <h2>TechTus Way — <em>4 trụ cột</em></h2>
+      <p>Cách chúng ta tư duy và thực thi: từ nhận thức, tiên phong, đến dẫn dắt.</p>
+    </div>
+
+    <div class="pillar-grid reveal-stagger">
+      <div class="card pillar-card">
+        <div class="pillar-index">01 / 04</div>
+        <div class="pillar-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+        </div>
+        <h3>Nhận thức &amp; Đơn giản hóa</h3>
+        <p>"Hiểu được bản chất bằng logic và dữ liệu kết hợp cảm nhận thực tế xung quanh để tìm thấy giải pháp tinh gọn nhất."</p>
+      </div>
+
+      <div class="card pillar-card">
+        <div class="pillar-index">02 / 04</div>
+        <div class="pillar-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <h3>Tiên phong &amp; Nâng tầm</h3>
+        <p>"Luôn ở trạng thái Ready trước mọi làn sóng công nghệ; không ngừng khai phóng tiềm năng và thực hành bền bỉ để nâng cấp giá trị bản thân, tạo ra những chuẩn mực mới cho tổ chức."</p>
+      </div>
+
+      <div class="card pillar-card">
+        <div class="pillar-index">03 / 04</div>
+        <div class="pillar-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+        </div>
+        <h3>Thực thi &amp; Đóng gói giá trị</h3>
+        <p>"Dấn thân thực thi qua từng vòng lặp; đo lường chuẩn xác để đóng gói nỗ lực thành những thành quả trọn vẹn, sẵn sàng trao gửi giá trị thực."</p>
+      </div>
+
+      <div class="card pillar-card">
+        <div class="pillar-index">04 / 04</div>
+        <div class="pillar-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+        </div>
+        <h3>Dẫn dắt &amp; Thấu cảm</h3>
+        <p>"Chủ động kiến tạo mục tiêu, gắn kết, thấu cảm và truyền cảm hứng khơi thông nguồn lực thúc đẩy đội ngũ đạt thành quả vượt kỳ vọng."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PART 4 : READY PATH ============== -->
+<section id="part-4">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-tag"><span class="dash"></span>Phần 04 · The Path</span>
+      <h2>Thông điệp <em>"The Ready Path"</em></h2>
+      <p>Không phải ai cũng đi cùng tốc độ — nhưng tất cả có thể đi cùng một hướng.</p>
+    </div>
+
+    <div class="ready-grid reveal-stagger">
+      <div class="card ready-card">
+        <span class="tag-line">Acceptance</span>
+        <h3>Chấp nhận sự khác biệt</h3>
+        <p>Mỗi người có một điểm xuất phát và tốc độ khác nhau. Có người mất <strong>1 năm</strong>, có người mất <strong>2 năm</strong> để lên một bậc. Điều đó không quan trọng bằng việc bạn đang <strong>không ngừng tiến về phía trước</strong>.</p>
+      </div>
+
+      <div class="card ready-card glow">
+        <span class="tag-line">Ready Path 2026</span>
+        <div class="mega-word">READY</div>
+        <p>Từ khóa <strong>READY</strong> của năm nay là cơn gió để đẩy con thuyền của bạn đi nhanh hơn. Khi bạn nâng tầm kỹ năng, bạn đang tự xây dựng <strong>di sản và giá trị bền vững</strong> cho chính mình.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== OUTRO ============== -->
+<section id="outro">
+  <div class="outro-card card reveal">
+    <span class="quote-mark">"</span>
+    <blockquote>
+      Công ty không ép buộc các bạn làm việc chăm chỉ hơn, công ty cần các bạn làm việc với sự
+      <strong>nhận thức rõ ràng hơn</strong> và <strong>đóng gói giá trị tốt hơn</strong>.
+      Hãy để Techie Skill Matrix là người bạn đồng hành, không phải là gánh nặng.
+    </blockquote>
+    <div class="ready-cta">READY?</div>
+    <div class="ready-cta-sub">Các bạn đã sẵn sàng chưa</div>
+  </div>
+</section>
+
+<footer>
+  <p>The Ready Path 2026 · <strong>TechTus</strong> · Dark Premium Edition · CEO Ông Ích Nguyên · 21.04.2026</p>
+</footer>
+
+<script>
+  // Progress bar
+  const pb = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    pb.style.width = pct + '%';
+  });
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => io.observe(el));
+
+  // Active nav link
+  const navLinks = document.querySelectorAll('.nav a');
+  const sections = [...document.querySelectorAll('section')];
+  const navIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => navIO.observe(s));
+
+  // Parallax gentle on hero orbs
+  const orbs = document.querySelectorAll('.hero .orb');
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    orbs.forEach((o, i) => {
+      o.style.transform = `translate(${x * (i + 1) * 0.6}px, ${y * (i + 1) * 0.6}px)`;
+    });
+  });
+</script>
+
+</body>
+</html>

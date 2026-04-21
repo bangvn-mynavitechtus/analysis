@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Ready Path 2026 — TechTus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-1: #4F46E5;   /* indigo 600 */
+    --brand-2: #7C3AED;   /* violet 600 */
+    --brand-3: #2563EB;   /* blue 600   */
+    --brand-glow: #A78BFA;
+    --ink: #0B1020;
+    --ink-2: #1E293B;
+    --muted: #64748B;
+    --paper: #F8FAFC;
+    --card: #FFFFFFEE;
+    --border: rgba(79, 70, 229, 0.15);
+    --shadow-sm: 0 4px 20px rgba(79, 70, 229, 0.08);
+    --shadow-md: 0 12px 40px rgba(79, 70, 229, 0.15);
+    --shadow-lg: 0 24px 60px rgba(79, 70, 229, 0.22);
+    --gradient-hero: linear-gradient(135deg, #4F46E5 0%, #7C3AED 45%, #2563EB 100%);
+    --gradient-soft: linear-gradient(135deg, #EEF2FF 0%, #F5F3FF 50%, #EFF6FF 100%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Be Vietnam Pro', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ========== PROGRESS BAR ========== */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    width: 0%;
+    background: var(--gradient-hero);
+    z-index: 1000;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px var(--brand-glow);
+  }
+
+  /* ========== TOP NAV ========== */
+  .nav {
+    position: fixed;
+    top: 16px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 10px;
+    display: flex;
+    gap: 4px;
+    box-shadow: var(--shadow-sm);
+    max-width: calc(100vw - 32px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    color: var(--ink-2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .nav a:hover { background: var(--gradient-soft); color: var(--brand-1); }
+  .nav a.active { background: var(--gradient-hero); color: #fff; }
+
+  /* ========== PRINT / PDF BUTTON ========== */
+  .pdf-btn {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    z-index: 999;
+    background: var(--gradient-hero);
+    color: #fff;
+    border: none;
+    padding: 14px 22px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .pdf-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .pdf-btn svg { width: 18px; height: 18px; }
+
+  /* ========== LAYOUT ========== */
+  section {
+    padding: 120px 24px;
+    position: relative;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ========== HERO ========== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-hero);
+    color: #fff;
+    overflow: hidden;
+    padding-top: 80px;
+  }
+  .hero::before, .hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    animation: float 12s ease-in-out infinite;
+  }
+  .hero::before {
+    width: 420px; height: 420px;
+    background: #A78BFA;
+    top: -80px; right: -80px;
+  }
+  .hero::after {
+    width: 520px; height: 520px;
+    background: #60A5FA;
+    bottom: -120px; left: -120px;
+    animation-delay: -4s;
+  }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -30px) scale(1.1); }
+  }
+  .hero-inner { position: relative; z-index: 2; text-align: center; max-width: 900px; }
+  .hero-kicker {
+    display: inline-block;
+    padding: 8px 18px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    backdrop-filter: blur(10px);
+  }
+  .hero h1 {
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+    background: linear-gradient(180deg, #fff 0%, #E0E7FF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-subtitle {
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-weight: 300;
+    opacity: 0.95;
+    margin-bottom: 40px;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 48px;
+  }
+  .hero-meta > div {
+    text-align: left;
+  }
+  .hero-meta span {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .hero-meta strong {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    opacity: 0.75;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob { 50% { transform: translate(-50%, 8px); } }
+
+  /* ========== SECTION HEADER ========== */
+  .section-header { margin-bottom: 60px; text-align: center; }
+  .section-number {
+    display: inline-block;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--brand-1);
+    padding: 6px 18px;
+    background: var(--gradient-soft);
+    border-radius: 999px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .section-header h2 {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .section-header p {
+    color: var(--muted);
+    margin-top: 16px;
+    font-size: 17px;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ========== SECTION 1 : WHY ========== */
+  #part-1 { background: var(--paper); }
+  .why-block {
+    display: grid;
+    gap: 28px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-top: 48px;
+  }
+  .why-card {
+    background: var(--card);
+    padding: 40px 32px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .why-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: var(--gradient-hero);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .why-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-md); }
+  .why-card:hover::before { transform: scaleX(1); }
+  .why-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--gradient-hero);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 24px rgba(79,70,229,0.3);
+  }
+  .why-icon svg { width: 28px; height: 28px; }
+  .why-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--ink);
+  }
+  .why-card p {
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  .why-card .highlight {
+    display: inline-block;
+    background: var(--gradient-soft);
+    padding: 2px 8px;
+    border-radius: 6px;
+    color: var(--brand-1);
+    font-weight: 600;
+  }
+
+  /* ========== SECTION 2 : CORE VALUES ========== */
+  #part-2 {
+    background: var(--gradient-soft);
+    position: relative;
+  }
+  .core-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .core-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 36px 28px;
+    position: relative;
+    border: 1px solid var(--border);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+  }
+  .core-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: var(--shadow-lg);
+  }
+  .core-card .core-num {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1;
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.15;
+    position: absolute;
+    top: 16px;
+    right: 24px;
+  }
+  .core-card .core-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .core-card .core-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gradient-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brand-1);
+    flex-shrink: 0;
+  }
+  .core-card .core-icon svg { width: 24px; height: 24px; }
+  .core-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .core-card h3 small {
+    display: block;
+    font-size: 13px;
+    color: var(--brand-1);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .core-card .quote {
+    font-style: italic;
+    color: var(--brand-2);
+    font-size: 14px;
+    margin-bottom: 14px;
+    padding-left: 12px;
+    border-left: 3px solid var(--brand-glow);
+  }
+  .core-card p {
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ========== SECTION 3 : TECHTUS WAY ========== */
+  #part-3 {
+    background: var(--ink);
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+  #part-3::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 30%, rgba(124,58,237,0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, rgba(37,99,235,0.25) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  #part-3 .section-header h2 {
+    background: linear-gradient(180deg, #fff 0%, #A78BFA 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  #part-3 .section-header p { color: #CBD5E1; }
+  #part-3 .section-number {
+    background: rgba(167,139,250,0.15);
+    color: var(--brand-glow);
+    border-color: rgba(167,139,250,0.3);
+  }
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .pillar-card {
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 36px 28px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+  .pillar-card:hover {
+    transform: translateY(-6px);
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(167,139,250,0.5);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+  }
+  .pillar-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .pillar-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--gradient-hero);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 10px 30px rgba(79,70,229,0.5);
+  }
+  .pillar-icon svg { width: 26px; height: 26px; color: #fff; }
+  .pillar-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+  .pillar-card p {
+    color: #CBD5E1;
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* ========== SECTION 4 : READY PATH ========== */
+  #part-4 { background: var(--paper); }
+  .ready-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: stretch;
+  }
+  @media (max-width: 780px) {
+    .ready-wrap { grid-template-columns: 1fr; }
+  }
+  .ready-card {
+    background: #fff;
+    border-radius: 28px;
+    padding: 48px 40px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s ease;
+  }
+  .ready-card.featured {
+    background: var(--gradient-hero);
+    color: #fff;
+    border: none;
+  }
+  .ready-card:hover { transform: translateY(-4px); }
+  .ready-card .tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    background: var(--gradient-soft);
+    color: var(--brand-1);
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  .ready-card.featured .tag {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+  .ready-card h3 {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 18px;
+    letter-spacing: -0.5px;
+  }
+  .ready-card p {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .ready-card .big-word {
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1;
+    margin: 18px 0;
+    background: linear-gradient(180deg, #fff 0%, #DDD6FE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -4px;
+  }
+
+  /* ========== FINAL / OUTRO ========== */
+  #outro {
+    background: var(--gradient-hero);
+    color: #fff;
+    text-align: center;
+    padding: 140px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  #outro::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(167,139,250,0.5) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .outro-inner { position: relative; z-index: 2; max-width: 880px; margin: 0 auto; }
+  #outro .quote-large {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 300;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    font-style: italic;
+    opacity: 0.95;
+  }
+  #outro .quote-large strong {
+    font-weight: 700;
+    font-style: normal;
+    background: linear-gradient(180deg, #fff 0%, #DDD6FE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .ready-cta {
+    font-size: clamp(56px, 10vw, 120px);
+    font-weight: 900;
+    letter-spacing: -4px;
+    line-height: 0.95;
+    background: linear-gradient(180deg, #fff 0%, #C7D2FE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 24px 0;
+  }
+  .ready-cta-sub {
+    font-size: 18px;
+    opacity: 0.9;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: var(--ink);
+    color: #94A3B8;
+    padding: 40px 24px;
+    text-align: center;
+    font-size: 14px;
+  }
+  footer strong { color: #fff; }
+
+  /* ========== ANIMATIONS (reveal on scroll) ========== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-stagger > * {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: none; }
+  .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.15s; opacity: 1; transform: none; }
+  .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.25s; opacity: 1; transform: none; }
+  .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.35s; opacity: 1; transform: none; }
+
+  /* ========== PRINT STYLES ========== */
+  @media print {
+    .nav, .pdf-btn, .progress-bar, .scroll-hint { display: none !important; }
+    .hero, #part-3, #outro { background: #fff !important; color: var(--ink) !important; }
+    .hero::before, .hero::after, #part-3::before, #outro::before { display: none !important; }
+    .hero h1, #part-3 .section-header h2, .ready-cta, #outro .quote-large strong { -webkit-text-fill-color: var(--brand-1); color: var(--brand-1); }
+    .ready-card.featured { background: var(--gradient-soft) !important; color: var(--ink) !important; }
+    .pillar-card { border-color: #E2E8F0 !important; background: #F8FAFC !important; color: var(--ink) !important; }
+    .pillar-card h3 { color: var(--ink) !important; }
+    .pillar-card p { color: var(--ink-2) !important; }
+    .reveal, .reveal-stagger > * { opacity: 1 !important; transform: none !important; }
+    section { padding: 40px 24px !important; page-break-inside: avoid; }
+    body { background: #fff; }
+  }
+
+  @media (max-width: 640px) {
+    section { padding: 80px 20px; }
+    .hero-meta { gap: 24px; }
+    .ready-card { padding: 36px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <a href="#hero" class="active">Mở đầu</a>
+  <a href="#part-1">Phần 1</a>
+  <a href="#part-2">Phần 2</a>
+  <a href="#part-3">Phần 3</a>
+  <a href="#part-4">Phần 4</a>
+  <a href="#outro">Lời kết</a>
+</nav>
+
+<button class="pdf-btn" onclick="window.print()" title="Tải xuống PDF">
+  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/>
+  </svg>
+  Tải PDF
+</button>
+
+<!-- ============== HERO ============== -->
+<section id="hero" class="hero">
+  <div class="hero-inner">
+    <span class="hero-kicker">Bản thuyết trình · TechTus 2026</span>
+    <h1>The Ready Path<br/>2026</h1>
+    <p class="hero-subtitle">
+      Hành trình nâng tầm sức sống, kỹ năng và giá trị bền vững — dành cho toàn thể đội ngũ TechTus.
+    </p>
+    <div class="hero-meta">
+      <div>
+        <span>Người trình bày</span>
+        <strong>CEO Ông Ích Nguyên</strong>
+      </div>
+      <div>
+        <span>Đối tượng</span>
+        <strong>Toàn thể đội ngũ TechTus</strong>
+      </div>
+      <div>
+        <span>Thông điệp cốt lõi</span>
+        <strong>We make Wow, we make Smile</strong>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">Cuộn xuống để khám phá ↓</div>
+</section>
+
+<!-- ============== PART 1 ============== -->
+<section id="part-1">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-number">PHẦN 01</span>
+      <h2>Tại sao chúng ta ở đây?</h2>
+      <p>Trước khi nói về việc chúng ta nhận được gì, hãy nói về nụ cười đầy sức sống tại TechTus.</p>
+    </div>
+
+    <div class="why-block reveal-stagger">
+      <div class="why-card">
+        <div class="why-icon">
+          <!-- Heart / vitality icon -->
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"/>
+          </svg>
+        </div>
+        <h3>Kết nối Sứ mệnh</h3>
+        <p>
+          Tại TechTus, chúng ta không phải là những
+          <span class="highlight">Human Resource</span>,
+          chúng ta là những <span class="highlight">Human Vitality</span>.
+          Vì chúng ta tin vào <strong>sức sống</strong> trong mỗi con người.
+        </p>
+      </div>
+
+      <div class="why-card">
+        <div class="why-icon">
+          <!-- Sparkle icon -->
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+          </svg>
+        </div>
+        <h3>Thông điệp cốt lõi</h3>
+        <p>
+          Mọi dòng code bạn viết, mọi giải pháp bạn đưa ra đều hướng về một đích đến duy nhất:
+          <span class="highlight">We make Wow, we make Smile</span>.
+          Wow cho khách hàng và Smile cho chính chúng ta — nụ cười của sự trưởng thành và sức sống mãnh liệt.
+        </p>
+      </div>
+
+      <div class="why-card">
+        <div class="why-icon">
+          <!-- Map icon -->
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+        </div>
+        <h3>Bản đồ tăng trưởng</h3>
+        <p>
+          Công ty không chỉ là nơi làm việc, mà là môi trường để bạn tiến bộ, cùng nhau kiến tạo giá trị mới.
+          <span class="highlight">Techie Skill Matrix</span>
+          chính là bản đồ để bạn không bị lạc đường trên hành trình trưởng thành của chính mình.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PART 2 : CORE VALUES ============== -->
+<section id="part-2">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-number">PHẦN 02</span>
+      <h2>The Core Values</h2>
+      <p>Bốn từ khóa năng lượng — la bàn định hướng cho từng quyết định tại TechTus.</p>
+    </div>
+
+    <div class="core-grid reveal-stagger">
+      <div class="core-card">
+        <span class="core-num">01</span>
+        <div class="core-head">
+          <div class="core-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+          </div>
+          <h3>Minh bạch <small>Transparency</small></h3>
+        </div>
+        <div class="quote">"Mặt phẳng sự thật"</div>
+        <p>Làm việc trên dữ liệu khách quan. Tránh để cảm xúc lo lắng che mờ những điều chưa đúng. Dùng dữ liệu và cảm nhận hiện trường (Genba) để chia sẻ thẳng thắn.</p>
+      </div>
+
+      <div class="core-card">
+        <span class="core-num">02</span>
+        <div class="core-head">
+          <div class="core-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+          </div>
+          <h3>Thấu cảm <small>Empathy</small></h3>
+        </div>
+        <div class="quote">"Tư duy Người dùng kế tiếp"</div>
+        <p>Hãy code sao cho người QC và khách hàng thấy "dễ thở" nhất. Đặt mình vào vị trí của người nhận kết quả từ mình để hành động.</p>
+      </div>
+
+      <div class="core-card">
+        <span class="core-num">03</span>
+        <div class="core-head">
+          <div class="core-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+          </div>
+          <h3>Tận tâm <small>Customer Success</small></h3>
+        </div>
+        <div class="quote">"Đóng gói giá trị tinh hoa"</div>
+        <p>Không bàn giao "rác", chỉ bàn giao sự chỉn chu. Mỗi nỗ lực của bạn phải được đóng gói thành giá trị thực thụ cho khách hàng.</p>
+      </div>
+
+      <div class="core-card">
+        <span class="core-num">04</span>
+        <div class="core-head">
+          <div class="core-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <h3>Hòa hợp <small>Harmony</small></h3>
+        </div>
+        <div class="quote">"Vận hành không ma sát"</div>
+        <p>Tuân thủ tiêu chuẩn, tinh thần hợp tác để khơi thông điểm nghẽn, giúp Team và tổ chức chạy mượt mà, tinh gọn và tối ưu năng lượng.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PART 3 : TECHTUS WAY ============== -->
+<section id="part-3">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-number">PHẦN 03</span>
+      <h2>TechTus Way<br/>Hệ điều hành 4 trụ cột</h2>
+      <p>Cách chúng ta tư duy và thực thi — từ nhận thức, tiên phong, đến dẫn dắt.</p>
+    </div>
+
+    <div class="pillar-grid reveal-stagger">
+      <div class="pillar-card">
+        <div class="pillar-head">
+          <div class="pillar-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <h3>Nhận thức & Đơn giản hóa</h3>
+        </div>
+        <p>"Hiểu được bản chất bằng logic và dữ liệu kết hợp cảm nhận thực tế xung quanh để tìm thấy giải pháp tinh gọn nhất."</p>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-head">
+          <div class="pillar-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </div>
+          <h3>Tiên phong & Nâng tầm</h3>
+        </div>
+        <p>"Luôn ở trạng thái Ready trước mọi làn sóng công nghệ; không ngừng khai phóng tiềm năng và thực hành bền bỉ để nâng cấp giá trị bản thân, tạo ra những chuẩn mực mới cho tổ chức."</p>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-head">
+          <div class="pillar-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+          </div>
+          <h3>Thực thi & Đóng gói giá trị</h3>
+        </div>
+        <p>"Dấn thân thực thi qua từng vòng lặp; đo lường chuẩn xác để đóng gói nỗ lực thành những thành quả trọn vẹn, sẵn sàng trao gửi giá trị thực."</p>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-head">
+          <div class="pillar-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <h3>Dẫn dắt & Thấu cảm</h3>
+        </div>
+        <p>"Chủ động kiến tạo mục tiêu, gắn kết, thấu cảm và truyền cảm hứng khơi thông nguồn lực thúc đẩy đội ngũ đạt thành quả vượt kỳ vọng."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== PART 4 : READY PATH ============== -->
+<section id="part-4">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-number">PHẦN 04</span>
+      <h2>Thông điệp "The Ready Path"</h2>
+      <p>Không phải ai cũng đi cùng tốc độ — nhưng tất cả đều có thể đi cùng một hướng.</p>
+    </div>
+
+    <div class="ready-wrap reveal-stagger">
+      <div class="ready-card">
+        <span class="tag">Tôn trọng</span>
+        <h3>Chấp nhận sự khác biệt</h3>
+        <p>
+          Mỗi người có một điểm xuất phát và tốc độ khác nhau. Có người mất <strong>1 năm</strong>, có người mất <strong>2 năm</strong> để lên một bậc.
+          Điều đó không quan trọng bằng việc bạn đang <strong>không ngừng tiến về phía trước</strong>.
+        </p>
+      </div>
+
+      <div class="ready-card featured">
+        <span class="tag">Ready Path 2026</span>
+        <div class="big-word">READY</div>
+        <p>
+          Từ khóa <strong>READY</strong> của năm nay là cơn gió để đẩy con thuyền của bạn đi nhanh hơn.
+          Khi bạn nâng tầm kỹ năng, bạn đang tự xây dựng <strong>di sản và giá trị bền vững</strong> cho chính mình.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== OUTRO ============== -->
+<section id="outro">
+  <div class="outro-inner">
+    <p class="quote-large reveal">
+      "Công ty không ép buộc các bạn làm việc chăm chỉ hơn, công ty cần các bạn làm việc với sự
+      <strong>nhận thức rõ ràng hơn</strong> và <strong>đóng gói giá trị tốt hơn</strong>.
+      Hãy để Techie Skill Matrix là người bạn đồng hành, không phải là gánh nặng."
+    </p>
+    <div class="ready-cta reveal">READY?</div>
+    <div class="ready-cta-sub reveal">Các bạn đã sẵn sàng chưa</div>
+  </div>
+</section>
+
+<footer>
+  <p>Bản thuyết trình <strong>The Ready Path 2026</strong> · <strong>TechTus</strong> · CEO Ông Ích Nguyên · 21.04.2026</p>
+</footer>
+
+<script>
+  // Progress bar
+  const pb = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    pb.style.width = pct + '%';
+  });
+
+  // Reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => observer.observe(el));
+
+  // Active nav link
+  const navLinks = document.querySelectorAll('.nav a');
+  const sections = [...document.querySelectorAll('section')];
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => navObserver.observe(s));
+</script>
+
+</body>
+</html>
